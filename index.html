@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>House Price Prediction</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-image: url('https://picsum.photos/1920/1080');
+            background-size: cover;
+            background-attachment: fixed;
+            font-family: 'Open Sans', sans-serif;
+        }
+        .container {
+            width: 50%;
+            margin: 40px auto;
+            background-color: #fff;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-image: linear-gradient(to bottom, #f7f7f7, #fff);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        .form-control {
+            border-radius: 5px;
+            padding: 10px;
+        }
+        #predict-btn {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #predict-btn:hover {
+            background-color: #3e8e41;
+        }
+        #price-modal {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+        #price-modal .modal-header {
+            border-bottom: none;
+        }
+        #price-modal .modal-title {
+            font-size: 24px;
+            font-weight: bold;
+        }
+        #price-modal .modal-body {
+            padding: 20px;
+        }
+        #price-modal .btn-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        .house-image {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+        }
+        .navbar {
+            background-color: #4CAF50;
+            padding: 1rem;
+            border-bottom: 1px solid #ddd;
+        }
+        .navbar-brand {
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        .navbar-nav {
+            margin-left: auto;
+        }
+        .nav-link {
+            color: #fff;
+            padding: 10px;
+        }
+        .nav-link:hover {
+            color: #ddd;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">House Price Prediction</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" id="sign-in-btn" href="#">Sign In</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="sign-out-btn" href="#" style="display: none;">Sign Out</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h2>House Price Prediction</h2>
+        <img class="house-image" id="house-image" src="https://picsum.photos/200/300" alt="House Image">
+        <form>
+            <div class="form-group">
+                <label for="bedrooms">Number of Bedrooms:</label>
+                <input type="number" class="form-control" id="bedrooms" placeholder="Enter number of bedrooms">
+            </div>
+            <div class="form-group">
+                <label for="bathrooms">Number of Bathrooms:</label>
+                <input type="number" class="form-control" id="bathrooms" placeholder="Enter number of bathrooms">
+            </div>
+            <div class="form-group">
+                <label for="sqft">Square Footage:</label>
+                <input type="number" class="form-control" id="sqft" placeholder="Enter square footage">
+            </div>
+            <button type="button" class="btn" id="predict-btn">Predict Price</button>
+        </form>
+        <div class="modal fade" id="price-modal" tabindex="-1" role="dialog" aria-labelledby="price-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="price-modal-label">Predicted Price</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p id="predicted-price"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="sign-in-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sign-in-modal-label">Sign In</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="username">Username:</label>
+                                <input type="text" class="form-control" id="username" placeholder="Enter username">
+                            </div>
+                            <div class="form-group">
+                                <label for="password">Password:</label>
+                                <input type="password" class="form-control" id="password" placeholder="Enter password">
+                            </div>
+                            <button type="button" class="btn" id="sign-in-submit">Sign In</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="sign-in-success-modal" tabindex="-1" role="dialog" aria-labelledby="sign-in-success-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sign-in-success-modal-label">Sign In Success</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Sign in successful!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="sign-out-success-modal" tabindex="-1" role="dialog" aria-labelledby="sign-out-success-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="sign-out-success-modal-label">Sign Out Success</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Sign out successful!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal fade" id="invalid-credentials-modal" tabindex="-1" role="dialog" aria-labelledby="invalid-credentials-modal-label" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="invalid-credentials-modal-label">Invalid Credentials</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Invalid username or password. Please try again.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            const signInSection = {
+                username: "admin",
+                password: "password"
+            };
+            let userSignedIn = false;
+            const signOutBtn = $('#sign-out-btn');
+            const signInBtn = $('#sign-in-btn');
+            const signInSubmit = $('#sign-in-submit');
+            const signInModal = $('#sign-in-modal');
+            const signOutSuccessModal = $('#sign-out-success-modal');
+            const signInSuccessModal = $('#sign-in-success-modal');
+            const invalidCredentialsModal = $('#invalid-credentials-modal');
+            const predictedPriceText = $('#predicted-price');
+            const houseImage = $('#house-image');
+            const modelCoefficients = {
+                bedrooms: 10000,
+                bathrooms: 5000,
+                sqft: 50
+            };
+            const modelIntercept = 50000;
+            const predictBtn = $('#predict-btn');
+            signInBtn.click(function () {
+                signInModal.modal('show');
+            });
+            signInSubmit.click(function () {
+                const username = $('#username').val();
+                const password = $('#password').val();
+                if (username === signInSection.username && password === signInSection.password) {
+                    userSignedIn = true;
+                    signInBtn.hide();
+                    signOutBtn.show();
+                    signInSuccessModal.modal('show');
+                } else {
+                    invalidCredentialsModal.modal('show');
+                }
+            });
+            signOutBtn.click(function () {
+                userSignedIn = false;
+                signInBtn.show();
+                signOutBtn.hide();
+                signOutSuccessModal.modal('show');
+            });
+            predictBtn.click(function () {
+                if (userSignedIn) {
+                    const bedrooms = parseInt($('#bedrooms').val());
+                    const bathrooms = parseInt($('#bathrooms').val());
+                    const sqft = parseInt($('#sqft').val());
+    fetch('http://127.0.0.1:3000/predict', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ bedrooms, bathrooms, sqft })
+})
+.then(response => response.json())
+.then(data => {
+    predictedPriceText.text(`$${data.price.toFixed(2)}`);
+    $('#price-modal').modal('show');
+});
+
+                } else {
+                    signInModal.modal('show');
+                }
+            });
+            setInterval(function () {
+                houseImage.attr('src', `https://picsum.photos/200/300?random=${Math.random()}`);
+            }, 10000);
+        });
+    </script>
+</body>
+</html>
